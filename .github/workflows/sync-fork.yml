@@ -4,7 +4,7 @@ on:
   schedule:
     # 每天 10:00 CST (02:00 UTC) 自动同步
     - cron: '0 2 * * *'
-  # 允许在 GitHub 网页上手动触发
+    # 允许在 GitHub 网页上手动触发
   workflow_dispatch:
 
 jobs:
@@ -24,6 +24,6 @@ jobs:
           git remote add upstream https://github.com/caigee-cmd/cli2api.git || true
           git fetch upstream main
           git checkout main
-          # 仅快进合并（fork 是干净镜像，不应有分叉；若有分叉则失败而非制造混乱）
-          git merge --ff-only upstream/main
-          git push origin main
+          # fork 是纯镜像：把本地提交 rebase 到上游最新之上，再推（force-with-lease 防止误覆盖）
+          git rebase upstream/main
+          git push --force-with-lease origin main
