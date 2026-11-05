@@ -24,6 +24,11 @@ jobs:
           git remote add upstream https://github.com/caigee-cmd/cli2api.git || true
           git fetch upstream main
           git checkout main
+          # 上游没新提交就直接退出，不重写、不推送，避免每天空转触发部署
+          if [ "$(git rev-list --count HEAD..upstream/main)" = "0" ]; then
+            echo "Upstream has no new commits, nothing to sync."
+            exit 0
+          fi
                     # rebase 要重写提交，需要先设定提交者身份，否则报 empty ident
                               git config user.name "github-actions[bot]"
                                         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
